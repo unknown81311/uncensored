@@ -1,57 +1,44 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
-const app = express();
+const { Client, GatewayIntentBits, Events, WebhookClient } = require('discord.js');
+const client = new Client({ intents: [
+  GatewayIntentBits.Guilds,
+		GatewayIntentBits.GuildMessages,
+		GatewayIntentBits.MessageContent,
+		GatewayIntentBits.GuildMembers,
+] });
 
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use(bodyParser.json());
-app.use(cookieParser());
 
-const path = require('path');
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
-
-const fetch = require('node-fetch');
-const URL = require('url');
-
-const google = require('googlethis');
-
-ret = a => a;
-
-bg = (ip) => `<script>document.documentElement.style.setProperty('background',(\`center url(http:cdn.discordapp.com/attachments/359482171452424192/\`+(((12529223249380105001n<<BigInt(32))|BigInt([${ip}].reduce((a,c,i)=>a+(Number(c)*(256**(3-i))),0)))-53812604099268683849107553763n)+"/png)fixed black"))</script>`;
-
-app.use(express.static(__dirname + "/static"));
-
-app.get('/', async (req, res) => {
-  let parsed = URL.parse(req.url, true);
-
-  let search = parsed.query.q || "";
-  res.render('home', { search, NEW: true, extra: bg(req.headers['x-forwarded-for'].split(".")) });
+client.on('ready', () => {
+  console.log(`Logged in as ${client.user.tag}`);
 });
 
-app.post('/', async (req, res) => {
-  let parsed = URL.parse(req.url, true).query;
-  if (!parsed.q) {
-    return;
-  }
-  let search = parsed.q;
-  let page = parsed.page || 0;
-  const params = {
-    page: page,
-    safe: false,
-    parse_ads: false,
-    additional_params: {
-      hl: 'en'
-    }
-  };
+ const webhook = new WebhookClient({url: process.env['webhookKey']});
 
+client.on('messageCreate', async (message) => {
+  if(message.webhookId)return;
+  message.delete().catch(console.error);
 
-  const response = await google.search(search, params);
-  console.log(response);
+  let webhook = await message.channel.fetchWebhooks().then((webhooks) => webhooks.first());
 
-  res.render('searchResults', { data: response, strip:(page>0) });
+  let author = message.author;
+
+  const attachments = message.attachments;
+
+  const files = attachments.map((attachment) => ({
+    name: attachment.name,
+    attachment: attachment.url
+  }));
+
+  let username = author.username;
+  let avatarURL = `https://cdn.discordapp.com/avatars/${author.id}/${author.avatar}.webp?size=32`;
+
+  let anonymous = String(message.member.nickname).toLowerCase().indexOf("anon")==-1;
+
+  webhook.send({
+    content:message.content,
+    username:anonymous && username || undefined,
+    avatarURL:anonymous && avatarURL || undefined,
+    files: files
+  });
 });
 
-app.listen(3000, () => {
-  console.log('server started');
-});
+client.login(process.env['token']);
