@@ -1,0 +1,55 @@
+::-webkit-scrollbar {
+    background-color: #202324;
+    color: #aba499;
+}
+::-webkit-scrollbar-corner {
+    background-color: #181a1b;
+}
+::-webkit-scrollbar-thumb {
+    background-color: #454a4d;
+}
+::selection {
+    background-color: #004daa !important;
+    color: #e8e6e3 !important;
+}
+
+*{
+  outline:none;
+  font-family:Arial;
+  font-size: medium;
+  color: #e8e6e3;
+}
+
+body{
+  margin:0;
+  padding:5px;
+  padding-left:50px;
+  background-color: #181a1b;
+}
+
+input{
+  height:100%;
+  background:none;
+  border:0;
+  border-radius:0;
+  padding-top:0;
+  padding-bottom:0;
+}
+input[type=text]{
+  height: 100%;
+  width: calc(100% - 55px);
+  padding:0 5px;
+}
+input[type=submit]{
+  width: 50px;
+}
+form{
+  height: 30px;
+  max-width: 700px;
+  border:1px solid;
+  border-radius:5px;
+}
+
+main{
+  max-width:672px;
+}
