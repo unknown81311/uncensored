@@ -7,7 +7,6 @@ version=$(npm version --json | jq '."uncensored"' | tr -d '"')
 
 # Run the build
 npm i
-npm run build
 docker build . -t harbor.dotglitch.dev/library/cyle-uncensored:$version
 
 # Once built, push the new build number
