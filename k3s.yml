@@ -1,87 +1,30 @@
-apiVersion: traefik.containo.us/v1alpha1
-kind: IngressRoute
-metadata:
-  name: fr.to-ingress
-spec:
-  entryPoints:
-   - web
-  routes:
-    - match: HostRegexp(`fr.to`, `{subdomain:[a-z0-9\-]+}.fr.to`)
-      kind: Rule
-      services:
-      - name: fr-to-server
-        port: 80
-
----
-
-apiVersion: traefik.containo.us/v1alpha1
-kind: IngressRoute
-metadata:
-  name: fr.to-secure-ingress
-spec:
-  entryPoints:
-    - websecure
-  routes:
-    - kind: Rule
-      match: HostRegexp(`fr.to`, `{subdomain:[a-z0-9\-]+}.fr.to`)
-      services:
-        - name: fr-to-server
-          port: 80
-  tls:
-    secretName: fr.to-tls
-
----
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: fr-to-server
-spec:
-  selector:
-    app: fr-to-server
-  ports:
-  - protocol: "TCP"
-    port: 80
-    targetPort: 80
-  type: ClusterIP
-
----
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fr-to-server
+  name: cyle-uncensored
 spec:
   selector:
     matchLabels:
-      app: fr-to-server
+      app: cyle-uncensored
   replicas: 1
   template:
     metadata:
       labels:
-        app: fr-to-server
+        app: cyle-uncensored
     spec:
       containers:
-      - name: fr-to
-        image: harbor.dotglitch.dev/library/fr-to:latest
-        ports:
-        - containerPort: 80
+      - name: cyle-uncensored
+        image: harbor.dotglitch.dev/library/cyle-uncensored:latest
       imagePullSecrets:
       - name: harbor-key
-
----
-
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: fr.to
-spec:
-  commonName: '*.fr.to'
-  dnsNames:
-    - '*.fr.to'
-  issuerRef:
-    kind: ClusterIssuer
-    name: letsencrypt-stage
-  secretName: fr.to-tls
-
-
+      env:
+        - name: webhookKey
+          valueFrom:
+            secretKeyRef:
+              name: cyle-uncensored-secret
+              key: webhookKey       
+        - name: token
+          valueFrom:
+            secretKeyRef:
+              name: cyle-uncensored-secret
+              key: token
