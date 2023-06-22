@@ -15,16 +15,16 @@ spec:
       containers:
       - name: cyle-uncensored
         image: harbor.dotglitch.dev/library/cyle-uncensored:latest
+        env:
+          - name: webhookKey
+            valueFrom:
+              secretKeyRef:
+                name: cyle-uncensored-secret
+                key: webhookKey       
+          - name: token
+            valueFrom:
+              secretKeyRef:
+                name: cyle-uncensored-secret
+                key: token
       imagePullSecrets:
       - name: harbor-key
-      env:
-        - name: webhookKey
-          valueFrom:
-            secretKeyRef:
-              name: cyle-uncensored-secret
-              key: webhookKey       
-        - name: token
-          valueFrom:
-            secretKeyRef:
-              name: cyle-uncensored-secret
-              key: token
