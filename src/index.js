@@ -34,7 +34,7 @@ client.on('messageCreate', async (message) => {
   let anonymous = String(message.member.nickname).toLowerCase().indexOf("anon")==-1;
 
   webhook.send({
-    content:message.content,
+    content:message.cleanContent,
     username:anonymous && username || undefined,
     avatarURL:anonymous && avatarURL || undefined,
     files: files
