@@ -11,7 +11,6 @@ client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}`);
 });
 
- const webhook = new WebhookClient({url: process.env['webhookKey']});
 
 client.on('messageCreate', async (message) => {
   if(message.webhookId)return;
