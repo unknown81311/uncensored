@@ -17,7 +17,8 @@ client.on('messageCreate', async (message) => {
   message.delete().catch(console.error);
 
   let webhook = await message.channel.fetchWebhooks().then((webhooks) => webhooks.first());
-
+  if(!webhook)return;
+	
   let author = message.author;
 
   const attachments = message.attachments;
