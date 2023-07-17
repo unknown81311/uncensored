@@ -1,6 +1,6 @@
 module.exports = [{
     script: 'src/index.js',
-    name: 'cyle-unknown',
+    name: 'unknown',
     exec_mode: 'cluster',
     instances: '1',
     port: 80

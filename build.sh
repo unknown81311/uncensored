@@ -7,7 +7,7 @@ version=$(npm version --json | jq '."uncensored"' | tr -d '"')
 
 # Run the build
 npm i
-docker build . -t harbor.dotglitch.dev/library/cyle-uncensored:$version
+docker build . -t harbor.dotglitch.dev/library/uncensored:$version
 
 # Once built, push the new build number
 git add package.json
@@ -15,7 +15,7 @@ git commit -m "Bump version"
 git push
 
 # Push the new docker image
-docker push harbor.dotglitch.dev/library/cyle-uncensored:$version
+docker push harbor.dotglitch.dev/library/uncensored:$version
 
 # Inject the version number into the deployment files
 sed -i -e "s/:latest/:$version/g" k3s.yml
